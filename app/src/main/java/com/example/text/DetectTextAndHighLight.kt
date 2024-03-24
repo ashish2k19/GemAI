@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,21 +45,10 @@ fun detectText(bitmap: Bitmap){
             detectedTextResult = result
             val resultText = result.text
             detectText = resultText
-            //isTextDetected = true
+            isTextDetected = true
             isSheetOpen = true
-            //                CoroutineScope(Dispatchers.IO).launch {
-//                    textContent = geminiApi(resultText)
-//                    // Use the fetched data on the UI thread (with Dispatchers.Main)
-//                    withContext(Dispatchers.Main) {
-//                        // Update UI with data
-//                    }
-//                }
-
         }
         .addOnFailureListener { e ->
-            // Task failed with an exception
-            // Toast.makeText(MainActivity@this , "detect error" , Toast.LENGTH_SHORT).show()
-            // ...
         }
 }
 
@@ -66,11 +59,10 @@ fun DetectTextAndHighLight() {
         if (imageBitmap != null) {
             var Newbitmap = imageBitmap!!.asImageBitmap()
             androidx.compose.foundation.Canvas(
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxSize()
             ) {
                 drawImage(Newbitmap)
-            }
+
 
 
                 for (block in textResult.textBlocks) {
@@ -89,13 +81,13 @@ fun DetectTextAndHighLight() {
 
                         val size = Size(width = right - left, height = bottom - top)
 //
-//                        drawRect(
-//                            color = Color.Yellow, // Change color as desired
-//                            alpha = 0.5f, // Set transparency
-//                            topLeft = topLeft,
-//                            size = size
-//
-//                        )
+                        drawRect(
+                            color = Color.Yellow, // Change color as desired
+                            alpha = 0.5f, // Set transparency
+                            topLeft = topLeft,
+                            size = size
+
+                        )
 
 
 //                        drawRoundRect(
@@ -104,17 +96,18 @@ fun DetectTextAndHighLight() {
 //                            topLeft = topLeft,
 //                            size = size
 //                        )
-
-                        ClickableRectangle(
-                            topLeft = topLeft,
-                            size = size,
-                            onClick = {
-                                // Handle click event here (e.g., log text, navigate)
-                                Log.d("RectangleClick", "Clicked on Text Block: ${line.text}")
-                            }
-                        )
-
                     }
+
+//                        ClickableRectangle(
+//                            topLeft = topLeft,
+//                            size = size,
+//                            onClick = {
+//                                // Handle click event here (e.g., log text, navigate)
+//                                Log.d("RectangleClick", "Clicked on Text Block: ${line.text}")
+//                            }
+//                        )
+
+                }
 
                     //Log.d("block", "blockText : $blockText blockCornerPoints : $blockCornerPoints blockFrame : $blockFrame")
                 }
@@ -123,6 +116,7 @@ fun DetectTextAndHighLight() {
         }
 
     }
+
 }
 
 
@@ -143,9 +137,13 @@ fun ClickableRectangle(
             .clickable(onClick = onClick)
 //            .background(color = Color.Red)// Transparent background
     ) {
-        androidx.compose.foundation.Canvas(modifier = Modifier.size(height = size.height.dp , width = size.width.dp)) {
+        androidx.compose.foundation.Canvas(
+            modifier = Modifier.size(50.dp)
+            //  .size(height = size.height.dp , width = size.width.dp)
+        ) {
 
-            drawRoundRect( // Draw rounded rectangle highlight
+            drawRoundRect(
+                // Draw rounded rectangle highlight
                 color = color,
                 alpha = 0.5f, // Set transparency
                 topLeft = topLeft,
@@ -153,7 +151,6 @@ fun ClickableRectangle(
                 //cornerRadius = 5.dp // Rounded corner radius
             )
         }
-        // Optional content within the rectangle (e.g., text)
     }
 }
 

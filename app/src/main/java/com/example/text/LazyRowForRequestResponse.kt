@@ -3,6 +3,7 @@ package com.example.text
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,81 +25,72 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 
-var dataList = mutableStateListOf<RequestResponse>(RequestResponse(true,"hi i am gemmini a genAi")) // Replace with your actual data source
-//var updateList mutable
-//val data = listOf(
-//    RequestResponse(true, "hi gemini how are you"),
-//    RequestResponse(false, "i am good whats about you"),
-//    RequestResponse(true, "i am also fine")
-//)
+var dataList = mutableStateListOf<RequestResponse>(
+    RequestResponse(
+        false,
+        "Hi i am Gem AI"
+    )
+) // Replace with your actual data source
 
-
-//@Composable
-//fun ShowRequestResponseList() {
-//    Column(modifier = Modifier.fillMaxSize()) {
-////        TextField(
-////            value = userInput,
-////            onValueChange = { userInput = it },
-////            label = { Text("Enter your request:") },
-////            modifier = Modifier.fillMaxWidth().padding(16.dp)
-////        )
-//        Spacer(modifier = Modifier.height(8.dp))
-//        Button(onClick = { /* Add user input to dataList */ }) {
-//            Text("Submit")
-//        }
-//        if (currentItem != null) {
-//            RequestResponseItem(request = currentItem!!.request, response = currentItem!!.response)
-//        }
-//    }
-//}
-
-
-//@Composable
-//fun ShowRequestResponseList() {
-//    LazyColumn(
-//        modifier = Modifier.fillMaxSize()
-//    ) {
-//        items(dataList.size) { item ->
-//            RequestResponseItem(text = dataList.get(item).text, isRequest = dataList.get(item).isRequest)
-//        }
-//    }
-//}
+@Composable
+fun ShowRequestResponseList(paddingValue: PaddingValues) {
+    LazyColumn(
+        modifier = Modifier
+            .height(700.dp)
+            .padding(paddingValue)
+    ) {
+        items(dataList) { item ->  // Use item.text as a unique key
+            RequestResponseItem(text = item.text, isRequest = item.isRequest, bitmap = item.bitmap)
+        }
+    }
+}
 
 @Composable
 fun ShowRequestResponseList() {
     LazyColumn(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding()
     ) {
         items(dataList) { item ->  // Use item.text as a unique key
-            RequestResponseItem(text = item.text, isRequest = item.isRequest , bitmap = item.bitmap)
+            RequestResponseItem(text = item.text, isRequest = item.isRequest, bitmap = item.bitmap)
         }
     }
 }
+
 @Composable
 fun RequestResponseItem(text: String, isRequest: Boolean, bitmap: Bitmap? = null) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
-        if(isRequest){
-            Text(fontWeight = FontWeight.Bold,
+        if (isRequest) {
+            Text(
+                fontWeight = FontWeight.Bold,
                 text = "You",
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.White
+                // color = Color.White
             )
             if(bitmap!=null){
                 Image(bitmap = bitmap!!.asImageBitmap(),contentDescription = null,
-                    modifier = Modifier.width(200.dp).height(100.dp))
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(100.dp))
             }
             Text(text = text)
         } else{
            // Spacer(modifier = Modifier.height(8.dp))
-            Text(fontWeight = FontWeight.Bold,
-                text = "Gen Ai",
+            Text(
+                fontWeight = FontWeight.Bold,
+                text = "Gem AI",
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.White
+                //color = Color.
             )
             Text(text = text)
         }
 
     }
 }
+
+

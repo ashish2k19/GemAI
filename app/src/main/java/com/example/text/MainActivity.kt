@@ -1,6 +1,7 @@
 package com.example.text
 
 
+import android.annotation.SuppressLint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 
 
@@ -57,14 +58,18 @@ import androidx.compose.material.icons.rounded.AddCircle
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Send
 import androidx.compose.material.icons.rounded.ShoppingCart
+import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
@@ -136,27 +141,28 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var cropActivityResultLauncher: ActivityResultLauncher<Any?>
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-            val cropImage = registerForActivityResult(CropImageContract()) { result ->
-                if (result.isSuccessful) {
-                    // Use the returned uri.
-                    val uriContent = result.uriContent
-                    val inputStream = contentResolver.openInputStream(uriContent!!)
-                    val bitmap = BitmapFactory.decodeStream(inputStream)
-                    inputStream?.close()
-                    imageBitmap = bitmap
-                    //detectFace(bitmap)
-                    detectText(bitmap)
+        val cropImage = registerForActivityResult(CropImageContract()) { result ->
+            if (result.isSuccessful) {
+                // Use the returned uri.
+                val uriContent = result.uriContent
+                val inputStream = contentResolver.openInputStream(uriContent!!)
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+                imageBitmap = bitmap
+                //detectFace(bitmap)
+                detectText(bitmap)
 
-                    //val uriFilePath = result.getUriFilePath(context) // optional usage
-                } else {
-                    // An error occurred.
-                    val exception = result.error
-                }
+                //val uriFilePath = result.getUriFilePath(context) // optional usage
+            } else {
+                // An error occurred.
+                val exception = result.error
             }
+        }
 
         var cropImageContractOptions = CropImageContractOptions(uri = null,CropImageOptions(imageSourceIncludeGallery = true,imageSourceIncludeCamera= false));
 
@@ -174,216 +180,89 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-            //var textContent by remember { mutableStateOf("") }
             TextTheme {
-
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     var sheetState = rememberModalBottomSheetState()
+                    var scaffoledSheetState = rememberBottomSheetScaffoldState()
 //                    var isSheetOpen by rememberSaveable {
 //                        mutableStateOf(false)
 //                    }
+                    var scope = rememberCoroutineScope()
+                    Column(modifier = Modifier.fillMaxSize()) {
+//                        Button(onClick = { isSheetOpen = true
+//                                scope.launch {
+//                                    drawerState.open()
+//                                }
+//                            Log.d("Button clicked","icon button")
+//                        }) {
+//
+//                        }
+                        Scaffold(modifier = Modifier.fillMaxWidth(), topBar = { TopAppBarUi() }) {
+                            Column(modifier = Modifier.fillMaxSize()) {
+                                ShowRequestResponseList(it)
+                                EditableTextDemo(cropImage, cropImageContractOptions)
+                            }
 
-                   // Greeting("Android")
-                   // ImageViewWithBitmap(imageBitmap)
-
-
-                    //HighlightText(imageBitmap)
-                    ShowRequestResponseList()
-                    // DetectTextAndHighLight()
-
-
-
-                    Box() {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-
-                        ) {
-
-
-//                            Button(
-//                                onClick = {
-//
-//
-//                                    cropImage.launch(cropImageContractOptions)
-//
-//                                    // cropActivityResultLauncher.launch(null)
-//
-////                                bitmapLauncher.launch(
-////                                    Intent(
-////                                        Intent.ACTION_PICK,
-////                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-////                                    )
-////                                )
-//                                    isSheetOpen = true
-//
-//
-////                                val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-////                                startActivityForResult(galleryIntent, 125)
-//
-//
-////                                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-////                                if (intent.resolveActivity(packageManager) != null) {
-////                                    startActivityForResult(intent, 123)
-////                                } else {
-//////                                    Toast.makeText(
-//////                                        MainActivity.this,
-//////                                        "oops went worngin camera",
-//////                                        Toast.LENGTH_SHORT
-//////                                    ).show()
-////                                }
-//                                }, modifier = Modifier
-//                                    .height(50.dp)
-//                                    .width(100.dp)
-//                            ) {
-//                                Text(text = "Click Me!")
-//                            }
-//
-//
                         }
+
+
                     }
 
-
+//                if(isSheetOpen){
+//                    BottomSheetScaffold(sheetContent = {
+//                        Text("LOREMOAJOFJOASHDFIOJAOSJFALSDF" +
+//                                    "ASHDJFLKASDFJLASDJFASJDFLKAPSDLFJA;SDLKFJ;ASDFLA;SDFKKLFKLJAHSFGAJSDFH" +
+//                                    "IASJKLDF;LAKSJDF;LAKSD;FJA;LKSDLFKASDF" +
+//                                    "ASODJF;LKASJFKHASDFK;ASDKLFASKJLDFHKASHFKASHFASHFNASF" +
+//                                    "IASJDFJIAOSJHFLKASDLKFHASLKDJFHSADFJFHLASDFHLKASDF" +
+//                                    "AISDHFLKASDLFJSA;DLFKAS;LF;ASDKDF;ASKFKASHFJ" +
+//                                    "ASHLFKAJSKLJASFKJLASDJKLJKLASDKJLSDAFKJLADSJKLFDSAJLKFSAD" +
+//                                    "AKHSDHLASLJKDLKJASDJLKASLKJ")
+//                    }, scaffoldState = scaffoledSheetState ) {
+//
+//                    }
+//                }
                     if (isSheetOpen) {
-                        ModalBottomSheet(
+                        ModalBottomSheet(modifier = Modifier
+                            .padding(5.dp)
+                            .fillMaxSize(),
                             sheetState = sheetState,
                             onDismissRequest = {
                                 isSheetOpen = false
-                                isTextDetected = true
+                                //isTextDetected = true
 
 
                             }) {
-                            //DetectTextAndHighLight()
-                            Text(text = textContent)
+                            Column(
+                                modifier = Modifier
+                                    .size(500.dp)
+                                    .padding(0.dp)
+                            ) {
+                                DetectTextAndHighLight()
+                            }
+                            //  Text(text = detectText)
+
+
+//                            Text("LOREMOAJOFJOASHDFIOJAOSJFALSDF" +
+//                                    "ASHDJFLKASDFJLASDJFASJDFLKAPSDLFJA;SDLKFJ;ASDFLA;SDFKKLFKLJAHSFGAJSDFH" +
+//                                    "IASJKLDF;LAKSJDF;LAKSD;FJA;LKSDLFKASDF" +
+//                                    "ASODJF;LKASJFKHASDFK;ASDKLFASKJLDFHKASHFKASHFASHFNASF" +
+//                                    "IASJDFJIAOSJHFLKASDLKFHASLKDJFHSADFJFHLASDFHLKASDF" +
+//                                    "AISDHFLKASDLFJSA;DLFKAS;LF;ASDKDF;ASKFKASHFJ" +
+//                                    "ASHLFKAJSKLJASFKJLASDJKLJKLASDKJLSDAFKJLADSJKLFDSAJLKFSAD" +
+//                                    "AKHSDHLASLJKDLKJASDJLKASLKJ")
 
                         }
                     }
-                    EditableTextDemo(cropImage,cropImageContractOptions)
-                    //BoundingBoxImage(imageBitmap,bounding)
 
                 }
             }
         }
 
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == 123 && resultCode == RESULT_OK) {
-            val extras = data?.extras
-            val bitmap = extras?.get("data") as? Bitmap
-            if (bitmap != null) {
-                detectFace(bitmap)
-//                val rotationDegree = getRotationDegree(data)
-//                val rotatedBitmap = rotateBitmap(bitmap, rotationDegree)
-//                Log.d("MainActivity", "Rotationdegree: $rotationDegree rotateBitmap : $rotatedBitmap")
-
-            }
-        }
-
-        if (requestCode == 125 && resultCode == RESULT_OK && data != null) {
-            val selectedImageUri: Uri? = data.data
-
-//            val cropImage = registerForActivityResult(CropImageContract()) { result ->
-//                if (result.isSuccessful) {
-//                    // Use the returned uri.
-//                    val uriContent = result.uriContent
-//                    //val uriFilePath = result.getUriFilePath(context) // optional usage
-//                } else {
-//                    // An error occurred.
-//                    val exception = result.error
-//                }
-//            }
-//            cropImage.launch(
-//                CropImageContractOptions(uri = selectedImageUri, cropImageOptions = CropImageOptions(
-//                    guidelines = CropImageView.Guidelines.ON
-//                ))
-//            )
-
-
-            val bitmap: Bitmap? = selectedImageUri?.let { uri ->
-                // Use content resolver to open input stream and decode bitmap
-                contentResolver.openInputStream(uri)?.use { inputStream ->
-                    BitmapFactory.decodeStream(inputStream)
-                }
-            }
-
-            if (bitmap != null) {
-                detectFace(bitmap)
-                detectText(bitmap)
-            }
-
-
-        }
-
-    }
-     private fun detectFace(bitmap: Bitmap) {
-        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-        val image = InputImage.fromBitmap(bitmap, 0)
-
-        val result = recognizer.process(image)
-            .addOnSuccessListener { result ->
-                // Task completed successfully
-                val r = result
-                val resultText = result.text
-                detectText = resultText
-
-              //  HighlightTextWithBoundingBox(result)
-
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    textContent = geminiApi(resultText)
-//                    // Use the fetched data on the UI thread (with Dispatchers.Main)
-//                    withContext(Dispatchers.Main) {
-//                        // Update UI with data
-//                    }
-//                }
-
-               // textContent = resultText
-
-
-                //Toast.makeText(this , "detect sucessfully"+resultText , Toast.LENGTH_SHORT).show()
-                //Log.d("MainActivity", "Detected Text: $resultText")
-
-                // ...
-
-                for (block in result.textBlocks) {
-                    val blockText = block.text
-                    val blockCornerPoints = block.cornerPoints
-//                    val blockCornerPoints = block.cornerPoints?.get(0)?.x
-                    val blockFrame = block.boundingBox
-                    bounding = blockFrame
-//                    for (line in block.lines) {
-//                        val lineText = line.text
-//                        val lineCornerPoints = line.cornerPoints
-//                        val lineFrame = line.boundingBox
-//                        for (element in line.elements) {
-//                            val elementText = element.text
-//                            val elementCornerPoints = element.cornerPoints
-//                            val elementFrame = element.boundingBox
-//                        }
-//                    }
-
-                    Log.d("block", "blockText : $blockText blockCornerPoints : $blockCornerPoints blockFrame : $blockFrame")
-                }
-
-
-
-            }
-            .addOnFailureListener { e ->
-                // Task failed with an exception
-                Toast.makeText(this , "detect error" , Toast.LENGTH_SHORT).show()
-                // ...
-            }
-
-
-    }
-}
 @Composable
 fun ImageViewWithBitmap(bitmap: Bitmap?) {
     Column(
@@ -404,51 +283,6 @@ fun ImageViewWithBitmap(bitmap: Bitmap?) {
         }else {
             Text(text = "no image")
         }
-    }
-}
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-
-@Composable
-fun BoundingBoxImage(
-    bitmap: Bitmap?,
-    boundingBox: Rect?,
-    modifier: Modifier = Modifier
-) {
-    if(bitmap!=null) {
-        Image(
-            bitmap = bitmap!!.asImageBitmap(),
-            contentDescription = null,
-            modifier = modifier
-                .fillMaxSize()
-                .drawBehind {
-                    if (boundingBox != null) {
-                        drawRect(Color.Transparent)
-                        drawRect(
-                            color = Color.Red,
-                            topLeft = Offset(boundingBox.top.toFloat(), boundingBox.left.toFloat()),
-                            size = Size(
-                                boundingBox
-                                    .width()
-                                    .toFloat(),
-                                boundingBox
-                                    .height()
-                                    .toFloat()
-                            )
-                        )
-
-                    }
-                }
-                ,
-        )
     }
 }
 
@@ -481,88 +315,47 @@ fun EditableTextDemo(cropImage:ActivityResultLauncher<CropImageContractOptions>,
     }
 Box( ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier.fillMaxSize()
+        //,verticalArrangement = Arrangement.Bottom,
 
-        ) {
+    ) {
 
 //        Text(
 //            text = "Input",
 //            style = MaterialTheme.typography.bodyLarge
 //        )
         // TextField for editing text
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.Black)) {
-//            TextField(
-//                value = textState.value,
-//                onValueChange = { newValue ->
-//                    // Update the textState value when text changes
-//                    textState.value = newValue
-//                },
-//                label = { MaterialTheme.typography.bodyLarge },
-//                modifier = Modifier
-//                    .padding(start = 10.dp)
-//                    .fillMaxWidth(0.9f),
-//
-//                shape = MaterialTheme.shapes.extraLarge // Use medium rounded corners
-//
-//            )
-
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
             OutlinedTextField(
                 value = textState.value, // Your text value here
                 onValueChange = { newValue ->
 //                    // Update the textState value when text changes
-                  textState.value = newValue
+                    textState.value = newValue
                     isTextDetected = false
-               },
+                },
                 modifier = Modifier
                     .width(300.dp)
                     .padding(start = 10.dp)
                     .padding(top = 16.dp, bottom = 16.dp),
-                shape = RoundedCornerShape(8.dp), maxLines = 5,
+                shape = RoundedCornerShape(25.dp), maxLines = 5,
                 trailingIcon = {
-                    if(textState.value.equals("")) {
+                    if (textState.value.equals("")) {
                         Icon(Icons.Rounded.AddCircle, contentDescription = null,
                             modifier = Modifier
                                 .clickable {
                                     cropImage.launch(cropImageContractOptions)
-                        })
+
+                                })
                     }
-                }// Rounded corner shape
+                }
             )
-
-
-//            Icon(
-//                Icons.Rounded.Send,
-//                contentDescription = "Send",
-//                tint = Color.White, // Set the color of the icon
-//                modifier = Modifier
-//                    .size(60.dp)
-//                    .padding(start = 10.dp,top = 22.dp)
-//                    .fillMaxWidth(.1f)
-//
-//            )
-
-//            Button(colors = buttonColors(Color.Transparent),
-//                modifier = Modifier
-//                    .width(70.dp)
-//                    .height(70.dp)
-//                    .padding(start = 10.dp, top = 22.dp) ,onClick = {
-//                Log.d("button click" , "button")
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    Log.d("string" , "${textState.value}")
-//                    textContent = geminiApi(textState.value)
-//                    // Use the fetched data on the UI thread (with Dispatchers.Main)
-//                    withContext(Dispatchers.Main) {
-//                        // Update UI with data
-//                    }
-//                }
-//            }) {
                 Icon(
                     imageVector = if (showSendIcon) Icons.Rounded.Send else Icons.Rounded.Close,
                     contentDescription = "Send",
-                    tint = Color.White,
+                    tint = MaterialTheme.colorScheme.surfaceTint,
                     modifier = Modifier
                         .padding(start = 10.dp, top = 22.dp)
                         .size(40.dp)
@@ -573,18 +366,19 @@ Box( ) {
                                     try {
                                         showSendIcon = false
                                         Log.d("string", "${textState.value}")
-                                        if(imageBitmap!=null) {
+                                        if (imageBitmap != null) {
                                             dataList.add(
                                                 RequestResponse(
                                                     true, textState.value,
                                                     imageBitmap
                                                 )
                                             )
-                                        } else{
+                                        } else {
                                             dataList.add(
                                                 RequestResponse(
-                                                    true, textState.value)
+                                                    true, textState.value
                                                 )
+                                            )
                                         }
                                         textContent = geminiApi(textState.value)
                                         dataList.add(RequestResponse(false, textContent))
@@ -608,91 +402,6 @@ Box( ) {
 
         }
 
-
-        // Display the current text value
-
     }
 }
-//}
-
-@Composable
-fun HighlightText(imageBitmap : Bitmap?) {
-
-
-    if (imageBitmap!=null) {
-        var Newbitmap = imageBitmap!!.asImageBitmap()
-        androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
-            drawImage(Newbitmap) // Draw the original image
-
-            //for (block in result.textBlocks) {
-                val boundingBox = bounding
-                val left = boundingBox?.left?.toFloat() ?: 0f
-                val top = boundingBox?.top?.toFloat() ?: 0f
-                val right = boundingBox?.right?.toFloat() ?: 0f
-                val bottom = boundingBox?.bottom?.toFloat() ?: 0f
-
-
-                val topLeft = Offset(
-                    x = boundingBox?.left?.toFloat() ?: 0f,
-                    y = boundingBox?.top?.toFloat() ?: 0f
-                )
-
-                val size = Size(width = right - left, height = bottom - top)
-
-                drawRect(
-                    color = Color.Yellow, // Change color as desired
-                    alpha = 0.5f, // Set transparency
-                    topLeft = topLeft,
-                    size = size
-                )
-            //}
-        }
-    } else {
-        //Image(bitmap = image, contentDescription = "Image with Text") // Display image without highlighting
-        Text("no image found")
-    }
-}
-
-@Composable
-fun HighlightTextWithBoundingBox(result : Text) {
-
-        androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
-
-            //for (block in result.textBlocks) {
-            val boundingBox = bounding
-            val left = boundingBox?.left?.toFloat() ?: 0f
-            val top = boundingBox?.top?.toFloat() ?: 0f
-            val right = boundingBox?.right?.toFloat() ?: 0f
-            val bottom = boundingBox?.bottom?.toFloat() ?: 0f
-
-
-            val topLeft = Offset(
-                x = boundingBox?.left?.toFloat() ?: 0f,
-                y = boundingBox?.top?.toFloat() ?: 0f
-            )
-
-
-            val size = Size(width = right - left, height = bottom - top)
-
-            drawRect(
-                color = Color.Yellow, // Change color as desired
-                alpha = 0.5f, // Set transparency
-                topLeft = topLeft,
-                size = size
-            )
-            //}
-        }
-
-}
-
-
-
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TextTheme {
-        Greeting("Android")
-       // EditableTextDemo(isOpensheet)
-    }
 }
